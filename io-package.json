@@ -3,21 +3,29 @@
         "name":                     "nuimo",
         "version":                  "0.5.0",
         "title":                    "Javascript/Node.js based template adapter",
+	"news": {
+		"0.5.0": {
+			"en": "intial commit",
+			"de": "Erstes Kommit",
+			"ru": "Начало"
+		}
+	},
         "desc":                     {
  			             "en": "ioBroker nuimo Adapter",
  			             "de": "ioBroker nuimo Adapter",
- 			             "ru": "ioBroker nuimo драйвер как образец"
+ 			             "ru": "ioBroker nuimo драйвер"
 	},
+	"os":                       ["linux", "darwin"],
         "platform":                 "Javascript/Node.js",
         "mode":                     "daemon",
-        "icon":                     "template.png",
+        "icon":                     "nuimo.png",
         "enabled":                  true,
-	"extIcon":                  "https://raw.githubusercontent.com/ioBroker/ioBroker.template/master/admin/template.png",
-	"keywords":                 ["template", "vis", "GUI", "graphical", "scada"],
-        "readme":                   "https://github.com/ioBroker/ioBroker.template/blob/master/README.md",
-	"loglevel":                 "warn",
-        "type":                     "common adapters",
-        "restartAdapters":          ["vis"]
+	"extIcon":                  "https://raw.githubusercontent.com/ioBroker/Muskelkatermann.nuimo/master/admin/nuimo.png",
+	"keywords":                 ["nuimo", "controller"],
+        "readme":                   "https://github.com/Muskelkatermann/ioBroker.nuimo/blob/master/README.md",
+	"loglevel":                 "info",
+        "type":                     "hardware",
+	"stopBeforeUpdate":         true
     },
     "native": {
         "test1": true,
