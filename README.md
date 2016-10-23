@@ -32,6 +32,45 @@ setState(nuimo+"dotMatrix", display);
 
 ## Changelog
 
+### 0.5.1
+(Muskelkatermann) Better Rotation Handling
+```
+on({id: nuimo+"rotationBegan", valNe: false}, function(obj)
+{
+    setState(nuimo+"rotationFactor",0.005); // Sets the ratio between hardware rotation and locical rotation
+
+    setState(nuimo+"rotationAbsolute",22); // Inital Rotation value, for example current TV Volume
+});
+
+on({id: nuimo+"rotationAbsolute", valNe: false}, function(obj)
+{
+    var matrix = Math.round(getState(nuimo+"dotMatrixNumber").val);
+    var newVal = Math.round(obj.state.val);
+
+    if(matrix!=newVal)
+    {
+        // Update LEDMatrix
+        setState(nuimo+"dotMatrixNumber",Math.round(obj.state.val)); 
+        if(newVal-matrix >= 1)
+        {
+            // Value increase, increment connected state
+            setState("lgtv.0.volumeUp",true);
+        }else
+        if(newVal-matrix <= -1)
+        {
+        // Value decreased, decrement connected state
+            setState("lgtv.0.volumeDown",true);
+        }
+    }
+
+});
+
+on({id: nuimo+"rotationEnded", valNe: false}, function(obj)
+{
+    log("rotationEnded","info");
+});
+```
+
 ### 0.5.0
   (Muskelkatermann) initial commit
 

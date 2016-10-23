@@ -38,7 +38,189 @@ let Nuimo = require("./node_modules/nuimojs/nuimo.js"),
 	
 	
 var theDevice;
+var internalRotationBegan = false;
+var internalRotationAbsolute = 0;
+var internalRotationFactor = 0;
+
 var timeoutHandle;
+
+
+var blank = [
+            0, 0, 0, 0,
+            0, 0, 0, 0,
+            0, 0, 0, 0,
+            0, 0, 0, 0,
+            0, 0, 0, 0,
+            0, 0, 0, 0,
+            0, 0, 0, 0,
+            0, 0, 0, 0,
+            0, 0, 0, 0,
+        ];
+		
+		var number_0 = [
+            0, 0, 0, 0,
+            1, 1, 1, 1,
+            1, 0, 0, 1,
+            1, 0, 0, 1,
+            1, 0, 0, 1,
+            1, 0, 0, 1,
+            1, 0, 0, 1,
+            1, 1, 1, 1,
+            0, 0, 0, 0,
+        ];
+		
+		var number_1 = [
+            0, 0, 0, 0,
+            0, 0, 1, 0,
+            0, 0, 1, 0,
+            0, 0, 1, 0,
+            0, 0, 1, 0,
+            0, 0, 1, 0,
+            0, 0, 1, 0,
+            0, 0, 1, 0,
+            0, 0, 0, 0,
+        ];
+		
+		var number_2 = [
+            0, 0, 0, 0,
+            1, 1, 1, 1,
+            0, 0, 0, 1,
+            0, 0, 0, 1,
+            1, 1, 1, 1,
+            1, 0, 0, 0,
+            1, 0, 0, 0,
+            1, 1, 1, 1,
+            0, 0, 0, 0,
+        ];
+		
+		var number_3 = [
+            0, 0, 0, 0,
+            1, 1, 1, 1,
+            0, 0, 0, 1,
+            0, 0, 0, 1,
+            1, 1, 1, 1,
+            0, 0, 0, 1,
+            0, 0, 0, 1,
+            1, 1, 1, 1,
+            0, 0, 0, 0,
+        ];
+		
+		var number_4 = [
+            0, 0, 0, 0,
+            1, 0, 0, 1,
+            1, 0, 0, 1,
+            1, 0, 0, 1,
+            1, 1, 1, 1,
+            0, 0, 0, 1,
+            0, 0, 0, 1,
+            0, 0, 0, 1,
+            0, 0, 0, 0,
+        ];
+		
+		var number_5 = [
+            0, 0, 0, 0,
+            1, 1, 1, 1,
+            1, 0, 0, 0,
+            1, 0, 0, 0,
+            1, 1, 1, 1,
+            0, 0, 0, 1,
+            0, 0, 0, 1,
+            1, 1, 1, 1,
+            0, 0, 0, 0,
+        ];
+		
+		var number_6 = [
+            0, 0, 0, 0,
+            1, 1, 1, 1,
+            1, 0, 0, 0,
+            1, 0, 0, 0,
+            1, 1, 1, 1,
+            1, 0, 0, 1,
+            1, 0, 0, 1,
+            1, 1, 1, 1,
+            0, 0, 0, 0,
+        ];
+		
+		var number_7 = [
+            0, 0, 0, 0,
+            1, 1, 1, 1,
+            0, 0, 0, 1,
+            0, 0, 0, 1,
+            0, 0, 0, 1,
+            0, 0, 0, 1,
+            0, 0, 0, 1,
+            0, 0, 0, 1,
+            0, 0, 0, 0,
+        ];
+		
+		var number_8 = [
+            0, 0, 0, 0,
+            1, 1, 1, 1,
+            1, 0, 0, 1,
+            1, 0, 0, 1,
+            1, 1, 1, 1,
+            1, 0, 0, 1,
+            1, 0, 0, 1,
+            1, 1, 1, 1,
+            0, 0, 0, 0,
+        ];
+		
+		var number_9 = [
+            0, 0, 0, 0,
+            1, 1, 1, 1,
+            1, 0, 0, 1,
+            1, 0, 0, 1,
+            1, 1, 1, 1,
+            0, 0, 0, 1,
+            0, 0, 0, 1,
+            0, 0, 0, 1,
+            0, 0, 0, 0,
+        ];
+		
+		var numbers = [number_0,
+					number_1,
+					number_2,
+					number_3,
+					number_4,
+					number_5,
+					number_6,
+					number_7,
+					number_8,
+					number_9]
+		
+		function setMatrixNumeric(digit1, digit2)
+		{
+			var matrix = [
+					0,0
+				];
+				
+			for( var i = 0; i < 82; i++)
+			{
+				matrix[i] = 0;
+			}
+			var count = 0;
+			for( var i = 0; i < 10; i++)
+			{
+				for( var j = 0; j < 4; j++)
+				{
+					
+					matrix[(9*i)+j] = digit1[count];
+					count++;
+				}
+			}
+			count = 0;
+			for( var i = 0; i < 10; i++)
+			{
+				for( var j = 5; j < 9; j++)
+				{
+					
+					matrix[(9*i)+j] = digit2[count];
+					count++;
+				}
+			}
+			return matrix;
+		}
+		
 	
 // you have to require the utils module and call adapter function
 var utils =    require(__dirname + '/lib/utils'); // Get common adapter utils
@@ -80,7 +262,26 @@ adapter.on('stateChange', function (id, state) {
 	if(dp == "dotMatrix")
 	{
 		//getMatrixFromString(state.val);
-		theDevice.setLEDMatrix(getMatrixFromString(state.val), 10, 0);
+		theDevice.setLEDMatrix(getMatrixFromString(state.val), 255, 0);
+	}else
+	if(dp == "dotMatrixNumber")
+	{
+		var theValue = Math.round(state.val);
+		if(theValue>9)
+		{
+			theDevice.setLEDMatrix(setMatrixNumeric(numbers[String(theValue).charAt(0)],numbers[String(theValue).charAt(1)]), 255, 0);
+		}else
+		{
+			theDevice.setLEDMatrix(setMatrixNumeric(numbers[0],numbers[String(theValue).charAt(0)]), 255, 0);
+		}
+	}
+	if(dp == "rotationFactor")
+	{
+		internalRotationFactor = state.val;
+	}else
+	if(dp == "rotationAbsolute")
+	{
+		internalRotationAbsolute = state.val;
 	}
 	
 });
@@ -240,25 +441,70 @@ nuimo.on("discover", (device) => {
         native: {}
     });
 	
-	adapter.setObject(device.uuid+'.rotating', {
+	adapter.setObject(device.uuid+'.rotationBegan', {
         type: 'state',
         common: {
-            name: 'rotating',
+            name: 'rotationBegan',
             type: 'boolean',
             role: 'indicator'
         },
         native: {}
     });
+	adapter.setState(device.uuid+'.rotationBegan', {val: false, ack: true});
 	
-	adapter.setObject(device.uuid+'.rotationSpeed', {
+	adapter.setObject(device.uuid+'.rotationEnded', {
         type: 'state',
         common: {
-            name: 'rotationSpeed',
+            name: 'rotationEnded',
+            type: 'boolean',
+            role: 'indicator'
+        },
+        native: {}
+    });
+	adapter.setState(device.uuid+'.rotationEnded', {val: false, ack: true});
+	
+	adapter.setObject(device.uuid+'.rotationRelative', {
+        type: 'state',
+        common: {
+            name: 'rotationRelative',
             type: 'number',
             role: 'indicator'
         },
         native: {}
     });
+	
+	adapter.setObject(device.uuid+'.rotationAbsolute', {
+        type: 'state',
+        common: {
+            name: 'rotationAbsolute',
+            type: 'number',
+            role: 'indicator'
+        },
+        native: {}
+    });
+	
+	adapter.setObject(device.uuid+'.rotationFactor', {
+        type: 'state',
+        common: {
+            name: 'rotationFactor',
+            type: 'number',
+            role: 'indicator'
+			
+        },
+        native: {}
+    });
+	
+	adapter.getState(device.uuid+'.rotationFactor', function (err, state) {
+		if(!state.val)
+		{
+			internalRotationFactor = 0.1;
+			setState(device.uuid+'.rotationFactor',{val: 0.1, ack: true});
+		}else
+		{
+			adapter.log.info("!!!internalRotationFactor "+state.val);
+	    	internalRotationFactor = state.val	
+		}
+	}); 
 	
 	adapter.setObject(device.uuid+'.swipeLeft', {
         type: 'state',
@@ -350,6 +596,16 @@ nuimo.on("discover", (device) => {
         native: {}
     });
 	
+	adapter.setObject(device.uuid+'.dotMatrixNumber', {
+        type: 'state',
+        common: {
+            name: 'dotMatrixNumber',
+            type: 'number',
+            role: 'indicator'
+        },
+        native: {}
+    });
+	
 	adapter.setObject(device.uuid+'.dotMatrixBrightness', {
         type: 'state',
         common: {
@@ -428,253 +684,38 @@ nuimo.on("discover", (device) => {
         adapter.log.info(`Rotated by ${amount}`);
 		
 		
+		
+				
+			
+		var stateName = device.uuid+'.rotationBegan';
+		if(!internalRotationBegan)
+		{
+			internalRotationBegan = true;
+			adapter.setState(device.uuid+'.rotationBegan', {val: true, ack: true});
+			adapter.setState(device.uuid+'.rotationEnded', {val: false, ack: true});
+			
+			
+			internalRotationAbsolute = 0;
+			adapter.setState(device.uuid+'.rotationAbsolute', {val: 0, ack: true});
+			
+		}
+		
+		adapter.setState(device.uuid+'.rotationRelative', {val: amount, ack: true});
+		internalRotationAbsolute = internalRotationAbsolute + (amount*internalRotationFactor);
+		adapter.setState(device.uuid+'.rotationAbsolute', {val: internalRotationAbsolute, ack: true});
+		
 		clearTimeout(timeoutHandle);
 		timeoutHandle = setTimeout(function(){
-			adapter.log.info("Rotation didStop");
-		},250);
-		
-		
-		adapter.setState(device.uuid+'.rotating', {val: true, ack: true});
-		adapter.setState(device.uuid+'.rotationSpeed', {val: amount, ack: true});
-		
-		
-		/*
+			adapter.setState(device.uuid+'.rotationBegan', {val: false, ack: true});
+			adapter.setState(device.uuid+'.rotationEnded', {val: true, ack: true});
+			internalRotationBegan = false;
+		},350);
 		
 		
 		
-		var blank = [
-            0, 0, 0, 0,
-            0, 0, 0, 0,
-            0, 0, 0, 0,
-            0, 0, 0, 0,
-            0, 0, 0, 0,
-            0, 0, 0, 0,
-            0, 0, 0, 0,
-            0, 0, 0, 0,
-            0, 0, 0, 0,
-        ];
-		
-		var number_0 = [
-            0, 0, 0, 0,
-            1, 1, 1, 1,
-            1, 0, 0, 1,
-            1, 0, 0, 1,
-            1, 0, 0, 1,
-            1, 0, 0, 1,
-            1, 0, 0, 1,
-            1, 1, 1, 1,
-            0, 0, 0, 0,
-        ];
-		
-		var number_1 = [
-            0, 0, 0, 0,
-            0, 0, 1, 0,
-            0, 0, 1, 0,
-            0, 0, 1, 0,
-            0, 0, 1, 0,
-            0, 0, 1, 0,
-            0, 0, 1, 0,
-            0, 0, 1, 0,
-            0, 0, 0, 0,
-        ];
-		
-		var number_2 = [
-            0, 0, 0, 0,
-            1, 1, 1, 1,
-            0, 0, 0, 1,
-            0, 0, 0, 1,
-            1, 1, 1, 1,
-            1, 0, 0, 0,
-            1, 0, 0, 0,
-            1, 1, 1, 1,
-            0, 0, 0, 0,
-        ];
-		
-		var number_3 = [
-            0, 0, 0, 0,
-            1, 1, 1, 1,
-            0, 0, 0, 1,
-            0, 0, 0, 1,
-            1, 1, 1, 1,
-            0, 0, 0, 1,
-            0, 0, 0, 1,
-            1, 1, 1, 1,
-            0, 0, 0, 0,
-        ];
-		
-		var number_4 = [
-            0, 0, 0, 0,
-            1, 0, 0, 1,
-            1, 0, 0, 1,
-            1, 0, 0, 1,
-            1, 1, 1, 1,
-            0, 0, 0, 1,
-            0, 0, 0, 1,
-            0, 0, 0, 1,
-            0, 0, 0, 0,
-        ];
-		
-		var number_5 = [
-            0, 0, 0, 0,
-            1, 1, 1, 1,
-            1, 0, 0, 0,
-            1, 0, 0, 0,
-            1, 1, 1, 1,
-            0, 0, 0, 1,
-            0, 0, 0, 1,
-            1, 1, 1, 1,
-            0, 0, 0, 0,
-        ];
-		
-		var number_6 = [
-            0, 0, 0, 0,
-            1, 1, 1, 1,
-            1, 0, 0, 0,
-            1, 0, 0, 0,
-            1, 1, 1, 1,
-            1, 0, 0, 1,
-            1, 0, 0, 1,
-            1, 1, 1, 1,
-            0, 0, 0, 0,
-        ];
-		
-		var number_7 = [
-            0, 0, 0, 0,
-            1, 1, 1, 1,
-            0, 0, 0, 1,
-            0, 0, 0, 1,
-            0, 0, 0, 1,
-            0, 0, 0, 1,
-            0, 0, 0, 1,
-            0, 0, 0, 1,
-            0, 0, 0, 0,
-        ];
-		
-		var number_8 = [
-            0, 0, 0, 0,
-            1, 1, 1, 1,
-            1, 0, 0, 1,
-            1, 0, 0, 1,
-            1, 1, 1, 1,
-            1, 0, 0, 1,
-            1, 0, 0, 1,
-            1, 1, 1, 1,
-            0, 0, 0, 0,
-        ];
-		
-		var number_9 = [
-            0, 0, 0, 0,
-            1, 1, 1, 1,
-            1, 0, 0, 1,
-            1, 0, 0, 1,
-            1, 1, 1, 1,
-            0, 0, 0, 1,
-            0, 0, 0, 1,
-            0, 0, 0, 1,
-            0, 0, 0, 0,
-        ];
-		
-		var g1 = [
-            1, 0, 0, 1,
-            0, 0, 0, 0,
-            0, 0, 0, 0,
-            0, 0, 0, 0,
-            0, 0, 0, 0,
-            0, 0, 0, 0,
-            0, 0, 0, 0,
-            0, 0, 0, 0,
-            1, 0, 0, 1,
-        ];
-		
-		var g2 = [
-            1, 0, 0, 1,
-            0, 0, 0, 0,
-            0, 0, 0, 0,
-            0, 0, 0, 0,
-            0, 0, 0, 0,
-            0, 0, 0, 0,
-            0, 0, 0, 0,
-            0, 0, 0, 0,
-            1, 0, 0, 1,
-        ];
-		
-		var numbers = [number_0,
-					number_1,
-					number_2,
-					number_3,
-					number_4,
-					number_5,
-					number_6,
-					number_7,
-					number_8,
-					number_9,]
-		
-		function setMatrix(digit1, digit2)
-		{
-			var matrix = [
-					0,0
-				];
-				
-			for( var i = 0; i < 82; i++)
-			{
-				matrix[i] = 0;
-			}
-			var count = 0;
-			for( var i = 0; i < 10; i++)
-			{
-				for( var j = 0; j < 4; j++)
-				{
-					
-					matrix[(9*i)+j] = digit1[count];
-					count++;
-				}
-			}
-			count = 0;
-			for( var i = 0; i < 10; i++)
-			{
-				for( var j = 5; j < 9; j++)
-				{
-					
-					matrix[(9*i)+j] = digit2[count];
-					count++;
-				}
-			}
-			return matrix;
-		}
 		
 		
-		var valueChanged = false;
-		if(amount>30)
-		{
-			value++;
-			valueChanged = true;
-		}
-		if(amount<-30)
-		{
-			value--;
-			valueChanged = true;
-		}
-		
-		
-		var logvalue = "Wert: " + value;
-		adapter.log.info(logvalue);
-		 
-		if(valueChanged)
-		{
-			if(value>9)
-			{
-				device.setLEDMatrix(setMatrix(numbers[String(value).charAt(0)],numbers[String(value).charAt(1)]), 255, 10000);
-			}else
-			{
-				device.setLEDMatrix(setMatrix(numbers[0],numbers[String(value).charAt(0)]), 255, 10000);
-			}
-		}
-		*/
-		
-         
-		
-		
-		
+			
     });
 
     device.on("fly", (direction, speed) => {

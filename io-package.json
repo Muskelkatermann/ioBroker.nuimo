@@ -1,14 +1,19 @@
 {
     "common": {
         "name":                     "nuimo",
-        "version":                  "0.5.0",
+        "version":                  "0.5.1",
         "title":                    "Javascript/Node.js based template adapter",
 	"news": {
 		"0.5.0": {
 			"en": "intial commit",
 			"de": "Erstes Kommit",
 			"ru": "Начало"
-		}
+		},
+		"0.5.1": {
+			"en": "Better Rotation Handling",
+			"de": "Better Rotation Handling",
+			"ru": "Better Rotation Handling"
+		},
 	},
         "desc":                     {
  			             "en": "ioBroker nuimo Adapter",
