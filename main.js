@@ -419,7 +419,6 @@ nuimo.on("discover", (device) => {
         },
         native: {}
     });
-	adapter.setState(device.uuid+'.batteryLevel', {val: device.batteryLevel, ack: true});
 	
 	adapter.setObject(device.uuid+'.pressed', {
         type: 'state',
@@ -629,6 +628,12 @@ nuimo.on("discover", (device) => {
 
 
 
+	 device.on("batteryLevelChange", (level) => {
+        adapter.setState(device.uuid+'.batteryLevel', {val: level, ack: true});
+    });
+
+	
+	
 
 
     device.on("connect", () => {
@@ -644,13 +649,13 @@ nuimo.on("discover", (device) => {
     device.on("press", () => {
         adapter.log.info('Button pressed');
 		
-		adapter.setState(device.uuid+'.released', {val: false, ack: true});
-		adapter.setState(device.uuid+'.pressed', {val: true, ack: true});
+		//adapter.setState(device.uuid+'.released', {val: false, ack: true});
+		//adapter.setState(device.uuid+'.pressed', {val: true, ack: true});
 		
 		
-		/* LG 
+		 
          device.setLEDMatrix([
-            0, 0, 0, 0, 0, 0, 0, 0, 0,
+            1, 0, 0, 0, 0, 0, 0, 0, 1,
             0, 0, 0, 0, 0, 0, 0, 0, 0,
             1, 0, 0, 0, 0, 1, 1, 1, 1,
             1, 0, 0, 0, 0, 1, 0, 0, 0,
@@ -658,9 +663,9 @@ nuimo.on("discover", (device) => {
             1, 0, 0, 0, 0, 1, 0, 0, 1,
             1, 1, 1, 0, 0, 1, 1, 1, 1,
             0, 0, 0, 0, 0, 0, 0, 0, 0,
-            0, 0, 0, 0, 0, 0, 0, 0, 0
+            1, 0, 0, 0, 0, 0, 0, 0, 1
         ], 255, 10000);
-		*/
+		
 		
 		
 		
@@ -685,7 +690,8 @@ nuimo.on("discover", (device) => {
 		
 		
 		
-				
+		
+		
 			
 		var stateName = device.uuid+'.rotationBegan';
 		if(!internalRotationBegan)
