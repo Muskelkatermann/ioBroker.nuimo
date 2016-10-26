@@ -41,6 +41,10 @@ var theDevice;
 var internalRotationBegan = false;
 var internalRotationAbsolute = 0;
 var internalRotationFactor = 0;
+var internalDotMatrixBrightness= 255;
+var internalDotMatrixDuration= 1000;
+var internalDotMatrixFading= true;
+
 
 var timeoutHandle;
 
@@ -262,19 +266,19 @@ adapter.on('stateChange', function (id, state) {
 	if(dp == "dotMatrix")
 	{
 		//getMatrixFromString(state.val);
-		theDevice.setLEDMatrix(getMatrixFromString(state.val), 255, 0);
+		theDevice.setLEDMatrix(getMatrixFromString(state.val), internalDotMatrixBrightness, internalDotMatrixDuration, internalDotMatrixFading);
 	}else
 	if(dp == "dotMatrixNumber")
 	{
 		var theValue = Math.round(state.val);
 		if(theValue>9)
 		{
-			theDevice.setLEDMatrix(setMatrixNumeric(numbers[String(theValue).charAt(0)],numbers[String(theValue).charAt(1)]), 255, 0);
+			theDevice.setLEDMatrix(setMatrixNumeric(numbers[String(theValue).charAt(0)],numbers[String(theValue).charAt(1)]), internalDotMatrixBrightness, internalDotMatrixDuration, internalDotMatrixFading);
 		}else
 		{
-			theDevice.setLEDMatrix(setMatrixNumeric(numbers[0],numbers[String(theValue).charAt(0)]), 255, 0);
+			theDevice.setLEDMatrix(setMatrixNumeric(numbers[0],numbers[String(theValue).charAt(0)]), internalDotMatrixBrightness, internalDotMatrixDuration, internalDotMatrixFading);
 		}
-	}
+	}else
 	if(dp == "rotationFactor")
 	{
 		internalRotationFactor = state.val;
@@ -282,7 +286,22 @@ adapter.on('stateChange', function (id, state) {
 	if(dp == "rotationAbsolute")
 	{
 		internalRotationAbsolute = state.val;
+	}else
+	if(dp == "dotMatrixBrightness")
+	{
+		internalDotMatrixBrightness = state.val;
+	}else
+	if(dp == "dotMatrixDuration")
+	{
+		internalDotMatrixDuration = state.val;
+	}else
+	if(dp == "dotMatrixFading")
+	{
+		internalDotMatrixFading = state.val;
 	}
+	
+	
+	
 	
 });
 
@@ -494,13 +513,12 @@ nuimo.on("discover", (device) => {
     });
 	
 	adapter.getState(device.uuid+'.rotationFactor', function (err, state) {
-		if(!state.val)
+		if(!state)
 		{
 			internalRotationFactor = 0.1;
-			setState(device.uuid+'.rotationFactor',{val: 0.1, ack: true});
+			adapter.setState(device.uuid+'.rotationFactor',{val: 0.1, ack: true});
 		}else
 		{
-			adapter.log.info("!!!internalRotationFactor "+state.val);
 	    	internalRotationFactor = state.val	
 		}
 	}); 
@@ -605,25 +623,73 @@ nuimo.on("discover", (device) => {
         native: {}
     });
 	
+	
 	adapter.setObject(device.uuid+'.dotMatrixBrightness', {
         type: 'state',
         common: {
             name: 'dotMatrixBrightness',
             type: 'number',
-            role: 'indicator'
+            role: 'indicator',
+			def: '255',
+			min: '0',
+			max: '255'
         },
         native: {}
     });
+	adapter.getState(device.uuid+'.dotMatrixBrightness', function (err, state) {
+		if(!state)
+		{
+			internalDotMatrixBrightness= 255;
+			adapter.setState(device.uuid+'.dotMatrixBrightness',{val: internalDotMatrixBrightness, ack: true});
+		}else
+		{
+	    	internalDotMatrixBrightness = state.val	
+		}
+	});
 	
 	adapter.setObject(device.uuid+'.dotMatrixDuration', {
         type: 'state',
         common: {
             name: 'dotMatrixDuration',
             type: 'number',
+            role: 'indicator',
+			def: '1000'
+        },
+        native: {},
+    });
+	adapter.getState(device.uuid+'.dotMatrixDuration', function (err, state) {
+		if(!state)
+		{
+			internalDotMatrixDuration= 1000;
+			adapter.setState(device.uuid+'.dotMatrixDuration',{val: internalDotMatrixDuration, ack: true});
+		}else
+		{
+	    	internalDotMatrixDuration = state.val	
+		}
+	}); 
+	
+	adapter.setObject(device.uuid+'.dotMatrixFading', {
+        type: 'state',
+        common: {
+            name: 'dotMatrixFading',
+            type: 'boolean',
             role: 'indicator'
         },
-        native: {}
+        native: {},
     });
+	adapter.getState(device.uuid+'.dotMatrixFading', function (err, state) {
+		if(!state)
+		{
+			internalDotMatrixFading= true;
+			adapter.setState(device.uuid+'.dotMatrixFading',{val: internalDotMatrixFading, ack: true});
+		}else
+		{
+	    	internalDotMatrixFading = state.val	
+		}
+	}); 
+
+
+
 
 
 
@@ -649,22 +715,12 @@ nuimo.on("discover", (device) => {
     device.on("press", () => {
         adapter.log.info('Button pressed');
 		
-		//adapter.setState(device.uuid+'.released', {val: false, ack: true});
-		//adapter.setState(device.uuid+'.pressed', {val: true, ack: true});
+		adapter.setState(device.uuid+'.released', {val: false, ack: true});
+		adapter.setState(device.uuid+'.pressed', {val: true, ack: true});
 		
 		
 		 
-         device.setLEDMatrix([
-            1, 0, 0, 0, 0, 0, 0, 0, 1,
-            0, 0, 0, 0, 0, 0, 0, 0, 0,
-            1, 0, 0, 0, 0, 1, 1, 1, 1,
-            1, 0, 0, 0, 0, 1, 0, 0, 0,
-            1, 0, 0, 0, 0, 1, 0, 1, 1,
-            1, 0, 0, 0, 0, 1, 0, 0, 1,
-            1, 1, 1, 0, 0, 1, 1, 1, 1,
-            0, 0, 0, 0, 0, 0, 0, 0, 0,
-            1, 0, 0, 0, 0, 0, 0, 0, 1
-        ], 255, 10000);
+    
 		
 		
 		
